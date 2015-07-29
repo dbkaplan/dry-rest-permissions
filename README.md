@@ -200,5 +200,34 @@ You often need to know all of the possible permissions that are available to the
       
       class Meta:
           model = Project
-          fields = ('owner', 'permissions')
+          fields = ('id', 'owner', 'permissions')
   
+This will the defined permissions as so:
+
+    {
+      "id": 1,
+      "owner": 100,
+      "permissions": {
+        "read": true,
+        "write": false,
+        "create": true,
+        "update": true
+      }
+    }
+
+####Definition
+``DRYPermissionsField(actions=None, additional_actions=None, global_only=False, object_only=False, **kwargs):``
+
+``actions`` - This can be passed a list in order to limit the actions that are looked up.
+
+``additional_actions`` - If you add custom actions then you can have DRYPermissionsField look them up by adding an array of the actions as so ``permissions = DRYPermissionsField(additional_actions=['publish'])``.
+
+``global_only`` - If set to True then it will only look up global permissions.
+
+``object_only`` - If set to true then it will only look up object permissions.
+
+This field only returns what is defined on the model. By default it retrieves all default action types that are defined.
+
+##Filtering lists by action type
+Many times it is not enough to say that a user does not have permission to view a list of items. Instead you want a user to only be able to view a partial list of items. In this case DRY Rest Permissions built on the filter concept using ``DRYPermissionFiltersBase`` to apply permissions to what you can see.
+
