@@ -17,4 +17,4 @@ install:
   - pip install tox
 
 script:
-    - tox
+    - python runtests.py
