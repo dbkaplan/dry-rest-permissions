@@ -8,8 +8,8 @@ import subprocess
 
 
 PYTEST_ARGS = {
-    'default': ['tests'],
-    'fast': ['tests', '-q'],
+    'default': ['tests/tests.py'],
+    'fast': ['tests/tests.py', '-q'],
 }
 
 FLAKE8_ARGS = ['dry_rest_permissions', 'tests', '--ignore=E501']
