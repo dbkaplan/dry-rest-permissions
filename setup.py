@@ -9,7 +9,7 @@ from setuptools import setup
 name = 'dry-rest-permissions'
 package = 'dry_rest_permissions'
 description = 'Rules based permissions for the Django Rest Framework'
-url = 'https://github.com/helioscene/dry-rest-permissions'
+url = 'https://github.com/Helioscene/dry-rest-permissions'
 author = 'David B. Kaplan'
 author_email = 'dave@helioscene.com'
 license = 'BSD'
@@ -85,9 +85,6 @@ setup(
         'Natural Language :: English',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.3',
-        'Programming Language :: Python :: 3.4',
         'Topic :: Internet :: WWW/HTTP',
     ]
 )
