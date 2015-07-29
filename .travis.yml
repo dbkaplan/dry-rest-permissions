@@ -1,6 +1,6 @@
 language: python
 
-sudo: required
+sudo: false
 
 env:
     - TOX_ENV=py27-flake8
@@ -17,4 +17,4 @@ install:
   - pip install tox
 
 script:
-    - sudo tox -e $TOX_ENV
+    - tox -e $TOX_ENV
