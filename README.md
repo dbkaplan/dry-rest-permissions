@@ -12,12 +12,12 @@ This framework is a perfect fit for apps that have many tables and relationships
 ##What does DRY Rest Permissions provide?
 
 1. A framework for defining for defining global and object level permissions per action.
-  a. Support for broadly defining permissions by grouping actions into safe and unsafe types.
-  b. Support for defining only global (table level) permissions or only object (row level) permissions.
-  c. Support for custom list and detail actions.
+  1. Support for broadly defining permissions by grouping actions into safe and unsafe types.
+  2. Support for defining only global (table level) permissions or only object (row level) permissions.
+  3. Support for custom list and detail actions.
 2. A serializer field that will return permissions for an object to your client app. This is DRY and works with your existing permission definitions.
 3. A framework for limiting list requests based on permissions
-  a. Support for custom list actions
+  1. Support for custom list actions
   
 ##Why is DRY Rest Permissions different than other DRF permission packages?
 
