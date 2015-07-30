@@ -10,8 +10,8 @@ name = 'dry-rest-permissions'
 package = 'dry_rest_permissions'
 description = 'Rules based permissions for the Django Rest Framework'
 url = 'https://github.com/Helioscene/dry-rest-permissions'
-author = 'David B. Kaplan'
-author_email = 'dave@helioscene.com'
+author = 'Heliosene, David B. Kaplan'
+author_email = 'info@helioscene.com'
 license = 'BSD'
 
 
@@ -76,7 +76,7 @@ setup(
     package_data=get_package_data(package),
     install_requires=[],
     classifiers=[
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 3 - Alpha',
         'Environment :: Web Environment',
         'Framework :: Django',
         'Intended Audience :: Developers',
