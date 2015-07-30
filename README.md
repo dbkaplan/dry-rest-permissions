@@ -229,5 +229,42 @@ This will the defined permissions as so:
 This field only returns what is defined on the model. By default it retrieves all default action types that are defined.
 
 ##Filtering lists by action type
-Many times it is not enough to say that a user does not have permission to view a list of items. Instead you want a user to only be able to view a partial list of items. In this case DRY Rest Permissions built on the filter concept using ``DRYPermissionFiltersBase`` to apply permissions to what you can see.
+Many times it is not enough to say that a user does not have permission to view a list of items. Instead you want a user to only be able to view a partial list of items. In this case DRY Rest Permissions built on the filter concept using ``DRYPermissionFiltersBase`` to apply permissions to specific actions.
+
+If you want to apply the same permissions to all list requests (the standard one and custom list actions) you could do the following:
+
+    from dry_rest_permissions.generics import DRYPermissionFiltersBase
+    
+    class ProjectFilterBackend(DRYPermissionFiltersBase):
+      def filter_list_queryset(self, request, queryset, view):
+          """
+          Limits all list requests to only be seen by the owners or creators.
+          """
+          return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
+    
+    class ProjectViewSet(viewsets.ModelViewSet):
+        serializer_class = ProjectSerializer
+        queryset = Project.objects.all()
+        filter_backends = (ProjectFilterBackend,)
+
+If you had a custom list action called ``owned`` that returned just the owned projects you could do this:
+
+    from dry_rest_permissions.generics import DRYPermissionFiltersBase
+    
+    class ProjectFilterBackend(DRYPermissionFiltersBase):
+      action_routing = True
+      
+      def filter_list_queryset(self, request, queryset, view):
+          """
+          Limits all list requests to only be seen by the owners or creators.
+          """
+          return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
+          
+      def filter_owned_queryset(self, request, queryset, view):
+          return queryset.filter(owner=request.user)
+    
+    class ProjectViewSet(viewsets.ModelViewSet):
+        serializer_class = ProjectSerializer
+        queryset = Project.objects.all()
+        filter_backends = (ProjectFilterBackend,)
 
