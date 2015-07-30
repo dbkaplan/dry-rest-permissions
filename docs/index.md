@@ -1,6 +1,6 @@
 <div class="badges">
-    <a href="http://travis-ci.org/dbkaplan/dry-rest-permissions">
-        <img src="https://travis-ci.org/dbkaplan/dry-rest-permissions.svg?branch=master">
+    <a href="http://travis-ci.org/Helioscene/dry-rest-permissions">
+        <img src="https://travis-ci.org/Helioscene/dry-rest-permissions.svg?branch=master">
     </a>
     <a href="https://pypi.python.org/pypi/dry-rest-permissions">
         <img src="https://img.shields.io/pypi/v/dry-rest-permissions.svg">
