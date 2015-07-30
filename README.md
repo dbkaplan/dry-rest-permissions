@@ -21,9 +21,9 @@ This framework is a perfect fit for apps that have many tables and relationships
   
 ##Why is DRY Rest Permissions different than other DRF permission packages?
 
-Most other DRF permissions are based on django-guardian. Django-gaurdian is an explicit approach to permissions that requires data to be saved in tables that explicitly grants permissions for certain actions. For apps that have many ways for a user to be given permission to certain actions, this approach can be very hard to maintain.
+Most other DRF permissions are based on django-guardian. Django-guardian is an explicit approach to permissions that requires data to be saved in tables that explicitly grants permissions for certain actions. For apps that have many ways for a user to be given permission to certain actions, this approach can be very hard to maintain.
 
-For example: you may have an app which lets you create and modify projects if you are an admin of an association that owns the project. This means that a user's permission will be granted or revoked based on many possabilities including ownership of the project transering to a different association, the user's admin status in the association changing and the user entering or leaving the association. This would need a lot of triggers that would key off of these actions and explicitly change permissions.
+For example: you may have an app which lets you create and modify projects if you are an admin of an association that owns the project. This means that a user's permission will be granted or revoked based on many possibilities including ownership of the project transferring to a different association, the user's admin status in the association changing and the user entering or leaving the association. This would need a lot of triggers that would key off of these actions and explicitly change permissions.
 
 DRY Rest Permissions allows developers to easily describe what gives someone permission using the current data in an implicit way.
 
@@ -84,7 +84,7 @@ You may also use ``DRYGlobalPermissions`` and ``DRYObjectPermissions``, which wi
 ###Define permission logic on the model
 Permissions for DRY Rest permissions are defined on the model so that they can be accessed both from the view for checking and from the serializer for display purposes with the ``DRYPermissionsField``.
 
-**Gloabl permissions** are defined as either ``@staticmethod`` or ``@classmethod`` methods with the format ``has_<action/read/write>_permission``.
+**Global permissions** are defined as either ``@staticmethod`` or ``@classmethod`` methods with the format ``has_<action/read/write>_permission``.
 
 **Object permissions** are defined as methods with the format ``has_object_<action/read.write>_permission``.
 
@@ -191,7 +191,7 @@ Example:
         return False
 
 ##Returning Permissions to the Client App
-You often need to know all of the possible permissions that are available to the current user from within your client app so that you can show certain create, edit and destroy options. Sometimes you need to know the permssions on the client app so that you can display messages to them. ``DRYPermissionsField`` allows you to return these permissions in a serializer without having to redefine your permission logic. DRY!
+You often need to know all of the possible permissions that are available to the current user from within your client app so that you can show certain create, edit and destroy options. Sometimes you need to know the permissions on the client app so that you can display messages to them. ``DRYPermissionsField`` allows you to return these permissions in a serializer without having to redefine your permission logic. DRY!
 
     from dry_rest_permissions.generics import DRYPermissionsField
     
