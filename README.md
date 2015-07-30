@@ -7,7 +7,7 @@
 
 Rules based permissions for the Django Rest Framework.
 
-This framework is a perfect fit for apps that have many tables and relationships between them. It provides a framework that allows you to define, for each action or groups of actions, what users have permission based on existing data in your database.
+This framework is a perfect fit for apps that have many tables and relationships between them. It provides a framework that allows you to define, for each action or groups of actions, what users have permission for based on existing data in your database.
 
 ##What does DRY Rest Permissions provide?
 
