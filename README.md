@@ -75,6 +75,7 @@ First you must add ``DRYPermissions`` to the viewset's ``permission_classes``
 from rest_framework import viewsets
 from dry_rest_permissions.generics import DRYPermissions
 
+
 class ProjectViewSet(viewsets.ModelViewSet):
     permission_classes = (DRYPermissions,)
     queryset = Project.objects.all()
@@ -93,6 +94,7 @@ The following example shows how you would allow all users to read and create pro
 ```python
 from django.db import models
 from django.contrib.auth.models import User
+
 
 class Project(models.Model):
     owner = models.ForeignKey('User')
@@ -134,22 +136,22 @@ class Project(models.Model):
 ```python
 class Project(models.Model):
     owner = models.ForeignKey('User')
-...
+    ...
   
-@staticmethod
-def has_write_permission(request):
-    """
-    We can remove the has_create_permission because this implicitly grants that permission.
-    """
-    return True
-  
-def has_object_write_permission(self, request):
-    return False
-  
-def has_object_update_permission(self, request):
-    if request.user == self.owner:
+    @staticmethod
+    def has_write_permission(request):
+        """
+        We can remove the has_create_permission because this implicitly grants that permission.
+        """
         return True
-    return False
+      
+    def has_object_write_permission(self, request):
+        return False
+      
+    def has_object_update_permission(self, request):
+        if request.user == self.owner:
+            return True
+        return False
 ```
 ###Custom action permissions
 If a custom action, ``publish``, were created using ``@detail_route`` then permissions could be defined like so:
@@ -176,6 +178,8 @@ Three decorators were defined for common permission checks
 Example:
 ```python
 from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
+
+
 class Project(models.Model):
     owner = models.ForeignKey('User')
     ...
@@ -195,6 +199,7 @@ class Project(models.Model):
 You often need to know all of the possible permissions that are available to the current user from within your client app so that you can show certain create, edit and destroy options. Sometimes you need to know the permissions on the client app so that you can display messages to them. ``DRYPermissionsField`` allows you to return these permissions in a serializer without having to redefine your permission logic. DRY!
 ```python
 from dry_rest_permissions.generics import DRYPermissionsField
+
 
 class ProjectSerializer(serializers.ModelSerializer):
     permissions = DRYPermissionsField()
@@ -236,12 +241,15 @@ If you want to apply the same permissions to all list requests (the standard one
 ```python
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
 
+
 class ProjectFilterBackend(DRYPermissionFiltersBase):
+
     def filter_list_queryset(self, request, queryset, view):
         """
         Limits all list requests to only be seen by the owners or creators.
         """
         return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
@@ -250,7 +258,9 @@ class ProjectViewSet(viewsets.ModelViewSet):
 ```
 If you had a custom list action called ``owned`` that returned just the owned projects you could do this:
 ```python
+from django.db.models import Q
 from dry_rest_permissions.generics import DRYPermissionFiltersBase
+
 
 class ProjectFilterBackend(DRYPermissionFiltersBase):
     action_routing = True
@@ -263,6 +273,7 @@ class ProjectFilterBackend(DRYPermissionFiltersBase):
         
     def filter_owned_queryset(self, request, queryset, view):
         return queryset.filter(owner=request.user)
+
 
 class ProjectViewSet(viewsets.ModelViewSet):
     serializer_class = ProjectSerializer
