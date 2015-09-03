@@ -42,11 +42,12 @@ Install using ``pip``…
 ##Setup
 
 Add to INSTALLED_APPS
-
-    INSTALLED_APPS = (
-      ...
-      'dry_rest_permissions',)
-
+```python
+INSTALLED_APPS = (
+    ...
+    'dry_rest_permissions',
+)
+```
 ##Global vs. Object Permissions
 DRY Rest Permissions allows you to define both global and object level permissions.
 
@@ -70,15 +71,15 @@ Permissions can be added to ModelViewSet based APIs.
 ###Add permission class to a ModelViewSet
 
 First you must add ``DRYPermissions`` to the viewset's ``permission_classes``
+```python
+from rest_framework import viewsets
+from dry_rest_permissions.generics import DRYPermissions
 
-    from rest_framework import viewsets
-    from dry_rest_permissions.generics import DRYPermissions
-    
-    class ProjectViewSet(viewsets.ModelViewSet):
-      permission_classes = (DRYPermissions,)
-      queryset = Project.objects.all()
-      serializer_class = ProjectSerializer
-
+class ProjectViewSet(viewsets.ModelViewSet):
+    permission_classes = (DRYPermissions,)
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+```
 You may also use ``DRYGlobalPermissions`` and ``DRYObjectPermissions``, which will only check global or object permissions.
 
 ###Define permission logic on the model
@@ -89,83 +90,83 @@ Permissions for DRY Rest permissions are defined on the model so that they can b
 **Object permissions** are defined as methods with the format ``has_object_<action/read/write>_permission``.
 
 The following example shows how you would allow all users to read and create projects, while locking down the ability for any user to perform any other write action. In the example, read global and object permissions return ``True``, which grants permission to those actions. Write, globally returns False, which locks down write actions. However, create is a specific action and therefore takes precedence over write and gives all users the ability to create projects.
+```python
+from django.db import models
+from django.contrib.auth.models import User
 
-    from django.db import models
-    from django.contrib.auth.models import User
+class Project(models.Model):
+    owner = models.ForeignKey('User')
     
-    class Project(models.Model):
-      owner = models.ForeignKey('User')
+    @staticmethod
+    def has_read_permission(request):
+        return True
       
-      @staticmethod
-      def has_read_permission(request):
+    def has_object_read_permission(self, request):
         return True
-        
-      def has_object_read_permission(self, request):
-        return True
-        
-      @staticmethod
-      def has_write_permission(request):
+      
+    @staticmethod
+    def has_write_permission(request):
         return False
-        
-      @staticmethod
-      def has_create_permission(request):
+      
+    @staticmethod
+    def has_create_permission(request):
         return True
-  
+``` 
   Now we will add to this example and allow project owners to update or destroy a project.
-  
-    class Project(models.Model):
-      owner = models.ForeignKey('User')
-      ...
-        
-      @staticmethod
-      def has_write_permission(request):
+```python
+class Project(models.Model):
+    owner = models.ForeignKey('User')
+    ...
+      
+    @staticmethod
+    def has_write_permission(request):
         """
         We can remove the has_create_permission because this implicitly grants that permission.
         """
         return True
-        
-      def has_object_write_permission(self, request):
+      
+    def has_object_write_permission(self, request):
         if request.user == self.owner:
-          return True
+            return True
         return False
-  
+```
   If we just wanted to grant update permission, but not destroy we could do this:
+```python
+class Project(models.Model):
+    owner = models.ForeignKey('User')
+...
   
-      class Project(models.Model):
-      owner = models.ForeignKey('User')
-      ...
-        
-      @staticmethod
-      def has_write_permission(request):
-        """
-        We can remove the has_create_permission because this implicitly grants that permission.
-        """
+@staticmethod
+def has_write_permission(request):
+    """
+    We can remove the has_create_permission because this implicitly grants that permission.
+    """
+    return True
+  
+def has_object_write_permission(self, request):
+    return False
+  
+def has_object_update_permission(self, request):
+    if request.user == self.owner:
         return True
-        
-      def has_object_write_permission(self, request):
-        return False
-        
-      def has_object_update_permission(self, request):
-        if request.user == self.owner:
-          return True
-        return False
-
+    return False
+```
 ###Custom action permissions
 If a custom action, ``publish``, were created using ``@detail_route`` then permissions could be defined like so:
-
-    class Project(models.Model):
-      owner = models.ForeignKey('User')
-      ...
-        
-      @staticmethod
-      def has_publish_permission(request):
+```python
+class Project(models.Model):
+    owner = models.ForeignKey('User')
+    ...
+      
+    @staticmethod
+    def has_publish_permission(request):
         return True
-        
-      def has_object_publish_permission(self, request):
+      
+    def has_object_publish_permission(self, request):
         if request.user == self.owner:
-          return True
+            return True
         return False
-  
+``` 
 ###Helpful decorators
 Three decorators were defined for common permission checks
 ``@allow_staff_or_superuser`` - Allows any user that has staff or superuser status to have the permission.
@@ -173,48 +174,48 @@ Three decorators were defined for common permission checks
 ``@unauthenticated_users`` - This permission will only be checked for unauthenticated users. Authenticated users will automatically be denied permission.
 
 Example:
-
-    from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
-    class Project(models.Model):
-      owner = models.ForeignKey('User')
-      ...
-        
-      @staticmethod
-      @authenticated_users
-      def has_publish_permission(request):
+```python
+from dry_rest_permissions.generics import allow_staff_or_superuser, authenticated_users
+class Project(models.Model):
+    owner = models.ForeignKey('User')
+    ...
+      
+    @staticmethod
+    @authenticated_users
+    def has_publish_permission(request):
         return True
-        
-      @allow_staff_or_sueruser
-      def has_object_publish_permission(self, request):
+      
+    @allow_staff_or_sueruser
+    def has_object_publish_permission(self, request):
         if request.user == self.owner:
-          return True
+            return True
         return False
-
+```
 ##Returning Permissions to the Client App
 You often need to know all of the possible permissions that are available to the current user from within your client app so that you can show certain create, edit and destroy options. Sometimes you need to know the permissions on the client app so that you can display messages to them. ``DRYPermissionsField`` allows you to return these permissions in a serializer without having to redefine your permission logic. DRY!
+```python
+from dry_rest_permissions.generics import DRYPermissionsField
 
-    from dry_rest_permissions.generics import DRYPermissionsField
+class ProjectSerializer(serializers.ModelSerializer):
+    permissions = DRYPermissionsField()
     
-    class ProjectSerializer(serializers.ModelSerializer):
-      permissions = DRYPermissionsField()
-      
-      class Meta:
-          model = Project
-          fields = ('id', 'owner', 'permissions')
-  
+    class Meta:
+        model = Project
+        fields = ('id', 'owner', 'permissions')
+```  
 This response object will look like this:
-
-    {
-      "id": 1,
-      "owner": 100,
-      "permissions": {
+```json
+{
+    "id": 1,
+    "owner": 100,
+    "permissions": {
         "read": true,
         "write": false,
         "create": true,
         "update": true
-      }
     }
-
+}
+```
 ####Definition
 ``DRYPermissionsField(actions=None, additional_actions=None, global_only=False, object_only=False, **kwargs):``
 
@@ -232,39 +233,39 @@ This field only returns what is defined on the model. By default it retrieves al
 Many times it is not enough to say that a user does not have permission to view a list of items. Instead you want a user to only be able to view a partial list of items. In this case DRY Rest Permissions built on the filter concept using ``DRYPermissionFiltersBase`` to apply permissions to specific actions.
 
 If you want to apply the same permissions to all list requests (the standard one and custom list actions) you could do the following:
+```python
+from dry_rest_permissions.generics import DRYPermissionFiltersBase
 
-    from dry_rest_permissions.generics import DRYPermissionFiltersBase
-    
-    class ProjectFilterBackend(DRYPermissionFiltersBase):
-      def filter_list_queryset(self, request, queryset, view):
-          """
-          Limits all list requests to only be seen by the owners or creators.
-          """
-          return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
-    
-    class ProjectViewSet(viewsets.ModelViewSet):
-        serializer_class = ProjectSerializer
-        queryset = Project.objects.all()
-        filter_backends = (ProjectFilterBackend,)
+class ProjectFilterBackend(DRYPermissionFiltersBase):
+    def filter_list_queryset(self, request, queryset, view):
+        """
+        Limits all list requests to only be seen by the owners or creators.
+        """
+        return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
 
+class ProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
+    queryset = Project.objects.all()
+    filter_backends = (ProjectFilterBackend,)
+```
 If you had a custom list action called ``owned`` that returned just the owned projects you could do this:
+```python
+from dry_rest_permissions.generics import DRYPermissionFiltersBase
 
-    from dry_rest_permissions.generics import DRYPermissionFiltersBase
+class ProjectFilterBackend(DRYPermissionFiltersBase):
+    action_routing = True
     
-    class ProjectFilterBackend(DRYPermissionFiltersBase):
-      action_routing = True
-      
-      def filter_list_queryset(self, request, queryset, view):
-          """
-          Limits all list requests to only be seen by the owners or creators.
-          """
-          return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
-          
-      def filter_owned_queryset(self, request, queryset, view):
-          return queryset.filter(owner=request.user)
-    
-    class ProjectViewSet(viewsets.ModelViewSet):
-        serializer_class = ProjectSerializer
-        queryset = Project.objects.all()
-        filter_backends = (ProjectFilterBackend,)
+    def filter_list_queryset(self, request, queryset, view):
+        """
+        Limits all list requests to only be seen by the owners or creators.
+        """
+        return queryset.filter(Q(owner=request.user) | Q(creator=request.user))
+        
+    def filter_owned_queryset(self, request, queryset, view):
+        return queryset.filter(owner=request.user)
 
+class ProjectViewSet(viewsets.ModelViewSet):
+    serializer_class = ProjectSerializer
+    queryset = Project.objects.all()
+    filter_backends = (ProjectFilterBackend,)
+```
