@@ -39,7 +39,7 @@ class DRYPermissionFiltersBase(filters.BaseFilterBackend):
         by action type if action_routing is set to True.
         """
         # Check if this is a list type request
-        if(view.lookup_field not in view.kwargs):
+        if view.lookup_field not in view.kwargs:
             if not self.action_routing:
                 return self.filter_list_queryset(request, queryset, view)
             else:
@@ -52,7 +52,7 @@ class DRYPermissionFiltersBase(filters.BaseFilterBackend):
         Override this function to add filters.
         This should return a queryset so start with queryset.filter({your filters})
         """
-        assert False, "Method filter_list_queryset must be overriden on '%s'" % view.__class__.__name__
+        assert False, "Method filter_list_queryset must be overridden on '%s'" % view.__class__.__name__
 
 
 class DRYPermissions(permissions.BasePermission):
@@ -70,19 +70,19 @@ class DRYPermissions(permissions.BasePermission):
         2a) specific action permissions (e.g. has_object_retrieve_permission)
         2b) general action permissions  (e.g. has_object_read_permission)
 
-    If either of the specific permissions do not exist, the DRYPermssions will
+    If either of the specific permissions do not exist, the DRYPermissions will
     simply check the general permission.
     If any step in this process returns False then the checks stop there and
     throw a permission denied. If there is a "specific action" step then the
     "generic step" is skipped. In order to have permission there must be True returned
-    from both the Global and Object permissions categries, unless the global_permissions
+    from both the Global and Object permissions categories, unless the global_permissions
     or object_permissions attributes are set to False.
 
     Specific action permissions take their name from the action name,
     which is either DRF defined (list, retrieve, update, destroy, create)
     or developer defined for custom actions created using @list_route or @detail_route.
 
-    Options that may be overriden when using as a base class:
+    Options that may be overridden when using as a base class:
     global_permissions: If set to False then global permissions are not checked.
     object_permissions: If set to False then object permissions are not checked.
     partial_update_is_update: If set to False then specific permissions for
@@ -191,16 +191,16 @@ class DRYPermissionsField(fields.Field):
     has access or not.
 
     This will only return permissions that are defined by methods. For example it will not return
-    retrive: True if the read permission is defined.
+    retrieve: True if the read permission is defined.
 
     This will combine object and global permissions to only return True if both are True. If you
-    need to know whether a requester specifically has object or global permssions for informational
-    pruposes then use the global_only or object_only parameters.
+    need to know whether a requester specifically has object or global permissions for informational
+    purposes then use the global_only or object_only parameters.
 
     other parameters:
     actions: Add a list of strings here to specifically identify the actions this looks up. If left as None
         then it will return the default CRUD actions along with list and read and write.
-    additional_actions: Add a list of strings here to add on to the default actions, without having to repeate them.
+    additional_actions: Add a list of strings here to add on to the default actions, without having to repeat them.
     """
     default_actions = ['create', 'retrieve', 'update', 'destroy', 'write', 'read']
 
@@ -226,18 +226,19 @@ class DRYPermissionsField(fields.Field):
         """
         Check the model attached to the serializer to see what methods are defined and save them.
         """
-        assert parent.Meta.model is not None, "DRYPermissions is used on '%s' without a model" % parent.__class__.__name__
+        assert parent.Meta.model is not None, \
+            "DRYPermissions is used on '{}' without a model".format(parent.__class__.__name__)
 
         for action in self.actions:
 
             if not self.object_only:
                 global_method_name = "has_{action}_permission".format(action=action)
-                if(hasattr(parent.Meta.model, global_method_name)):
+                if hasattr(parent.Meta.model, global_method_name):
                     self.action_method_map[action] = {'global': global_method_name}
 
             if not self.global_only:
                 object_method_name = "has_object_{action}_permission".format(action=action)
-                if(hasattr(parent.Meta.model, object_method_name)):
+                if hasattr(parent.Meta.model, object_method_name):
                     if self.action_method_map.get(action, None) is None:
                         self.action_method_map[action] = {}
                     self.action_method_map[action]['object'] = object_method_name
@@ -254,7 +255,8 @@ class DRYPermissionsField(fields.Field):
             # If using global permissions and the global method exists for this action.
             if not self.object_only and method_names.get('global', None) is not None:
                 results[action] = getattr(self.parent.Meta.model, method_names['global'])(self.context['request'])
-            # If using object permissions, the global permission did not already evaluate to False and the object method exists for this action.
+            # If using object permissions, the global permission did not already evaluate to False and the object
+            # method exists for this action.
             if not self.global_only and results.get(action, True) and method_names.get('object', None) is not None:
                 results[action] = getattr(value, method_names['object'])(self.context['request'])
         return results
@@ -270,10 +272,10 @@ def allow_staff_or_superuser(func):
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
-        if(is_object_permission):
+        if is_object_permission:
             request = args[1]
 
-        if(request.user.is_staff or request.user.is_superuser):
+        if request.user.is_staff or request.user.is_superuser:
             return True
 
         return func(*args, **kwargs)
@@ -291,10 +293,10 @@ def authenticated_users(func):
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
-        if(is_object_permission):
+        if is_object_permission:
             request = args[1]
 
-        if(not(request.user and request.user.is_authenticated())):
+        if not(request.user and request.user.is_authenticated()):
             return False
 
         return func(*args, **kwargs)
@@ -312,10 +314,10 @@ def unauthenticated_users(func):
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
-        if(is_object_permission):
+        if is_object_permission:
             request = args[1]
 
-        if(request.user and request.user.is_authenticated()):
+        if request.user and request.user.is_authenticated():
             return False
 
         return func(*args, **kwargs)
