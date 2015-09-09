@@ -106,17 +106,22 @@ class DRYPermissions(permissions.BasePermission):
         )
 
         model_class = view.serializer_class.Meta.model
-        action = self._get_action(view.action)
 
-        method_name = "has_{action}_permission".format(action=action)
-        # If the specific action permission exists then use it, otherwise use general.
-        if hasattr(model_class, method_name):
-            return getattr(model_class, method_name)(request)
-        elif request.method in permissions.SAFE_METHODS:
-            assert hasattr(model_class, 'has_read_permission'), "'%s' does not have 'has_read_permission' or '%s' defined." % (model_class, method_name)
+        action_method_name = None
+        if hasattr(view, 'action'):
+            action = self._get_action(view.action)
+            action_method_name = "has_{action}_permission".format(action=action)
+            # If the specific action permission exists then use it, otherwise use general.
+            if hasattr(model_class, action_method_name):
+                return getattr(model_class, action_method_name)(request)
+
+        if request.method in permissions.SAFE_METHODS:
+            assert hasattr(model_class, 'has_read_permission'), \
+                self._get_error_message(model_class, 'has_read_permission', action_method_name)
             return model_class.has_read_permission(request)
         else:
-            assert hasattr(model_class, 'has_write_permission'), "'%s' does not have 'has_write_permission' or '%s' defined." % (model_class, method_name)
+            assert hasattr(model_class, 'has_write_permission'), \
+                self._get_error_message(model_class, 'has_write_permission', action_method_name)
             return model_class.has_write_permission(request)
 
     def has_object_permission(self, request, view, obj):
@@ -126,15 +131,22 @@ class DRYPermissions(permissions.BasePermission):
         if not self.object_permissions:
             return True
 
-        action = self._get_action(view.action)
+        model_class = view.serializer_class.Meta.model
+        action_method_name = None
+        if hasattr(view, 'action'):
+            action = self._get_action(view.action)
+            action_method_name = "has_object_{action}_permission".format(action=action)
+            # If the specific action permission exists then use it, otherwise use general.
+            if hasattr(obj, action_method_name):
+                return getattr(obj, action_method_name)(request)
 
-        method_name = "has_object_{action}_permission".format(action=action)
-        # If the specific action permission exists then use it, otherwise use general.
-        if hasattr(obj, method_name):
-            return getattr(obj, method_name)(request)
-        elif request.method in permissions.SAFE_METHODS:
+        if request.method in permissions.SAFE_METHODS:
+            assert hasattr(obj, 'has_object_read_permission'), \
+                self._get_error_message(model_class, 'has_object_read_permission', action_method_name)
             return obj.has_object_read_permission(request)
         else:
+            assert hasattr(obj, 'has_object_write_permission'), \
+                self._get_error_message(model_class, 'has_object_write_permission', action_method_name)
             return obj.has_object_write_permission(request)
 
     def _get_action(self, action):
@@ -145,6 +157,15 @@ class DRYPermissions(permissions.BasePermission):
         if self.partial_update_is_update and action == 'partial_update':
             return_action = 'update'
         return return_action
+
+    def _get_error_message(self, model_class, method_name, action_method_name):
+        """
+        Get assertion error message depending if there are actions permissions methods defined.
+        """
+        if action_method_name:
+            return "'{}' does not have '{}' or '{}' defined.".format(model_class, method_name, action_method_name)
+        else:
+            return "'{}' does not have '{}' defined.".format(model_class, method_name)
 
 
 class DRYGlobalPermissions(DRYPermissions):
