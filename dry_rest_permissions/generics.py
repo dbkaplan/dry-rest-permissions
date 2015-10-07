@@ -6,6 +6,7 @@ for CRUD actions, list actions and custom actions.  It also allows
 permission checks to be returned by the api per object so that
 they can be consumed by a front end application.
 """
+from functools import wraps
 
 from rest_framework import filters
 from rest_framework import permissions
@@ -269,6 +270,7 @@ def allow_staff_or_superuser(func):
     """
     is_object_permission = "has_object" in func.__name__
 
+    @wraps(func)
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
@@ -290,6 +292,7 @@ def authenticated_users(func):
     """
     is_object_permission = "has_object" in func.__name__
 
+    @wraps(func)
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
@@ -311,6 +314,7 @@ def unauthenticated_users(func):
     """
     is_object_permission = "has_object" in func.__name__
 
+    @wraps(func)
     def func_wrapper(*args, **kwargs):
         request = args[0]
         # use second parameter if object permission
