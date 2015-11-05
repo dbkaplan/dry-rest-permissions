@@ -7,12 +7,20 @@ env:
     - TOX_ENV=py27-docs
     - TOX_ENV=py27-django1.7-drf3.0
     - TOX_ENV=py27-django1.7-drf3.1
+    - TOX_ENV=py27-django1.7-drf3.2
+    - TOX_ENV=py27-django1.7-drf3.3
     - TOX_ENV=py27-django1.8-drf3.0
     - TOX_ENV=py27-django1.8-drf3.1
+    - TOX_ENV=py27-django1.8-drf3.2
+    - TOX_ENV=py27-django1.8-drf3.3
     - TOX_ENV=py34-django1.7-drf3.0
     - TOX_ENV=py34-django1.7-drf3.1
+    - TOX_ENV=py34-django1.7-drf3.2
+    - TOX_ENV=py34-django1.7-drf3.3
     - TOX_ENV=py34-django1.8-drf3.0
     - TOX_ENV=py34-django1.8-drf3.1
+    - TOX_ENV=py34-django1.8-drf3.2
+    - TOX_ENV=py34-django1.8-drf3.3
 
 matrix:
   fast_finish: true
