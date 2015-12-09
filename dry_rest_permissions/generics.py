@@ -101,12 +101,14 @@ class DRYPermissions(permissions.BasePermission):
         if not self.global_permissions:
             return True
 
-        assert view.serializer_class.Meta.model is not None, (
+        serializer_class = view.get_serializer_class()
+
+        assert serializer_class.Meta.model is not None, (
             "global_permissions set to true without a model "
             "set on the serializer for '%s'" % view.__class__.__name__
         )
 
-        model_class = view.serializer_class.Meta.model
+        model_class = serializer_class.Meta.model
 
         action_method_name = None
         if hasattr(view, 'action'):
@@ -132,7 +134,8 @@ class DRYPermissions(permissions.BasePermission):
         if not self.object_permissions:
             return True
 
-        model_class = view.serializer_class.Meta.model
+        serializer_class = view.get_serializer_class()
+        model_class = serializer_class.Meta.model
         action_method_name = None
         if hasattr(view, 'action'):
             action = self._get_action(view.action)
