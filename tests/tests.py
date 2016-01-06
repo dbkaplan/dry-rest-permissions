@@ -68,11 +68,11 @@ class SpecificGlobalMixin(object):
 class SpecificObjectMixin(object):
     specific_object_allowed = True
 
-    #Ignore this method. It is here to make tests easier to construct, but list requests will never occur for single objects
+    # Ignore this method. It is here to make tests easier to construct, but list requests will never occur for single objects
     def has_object_list_permission(self, request):
         return self.specific_object_allowed
 
-    #Ignore this method. It is here to make tests easier to construct, but create requests will never occur for single objects
+    # Ignore this method. It is here to make tests easier to construct, but create requests will never occur for single objects
     def has_object_create_permission(self, request):
         return self.specific_object_allowed
 
