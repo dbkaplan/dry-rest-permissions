@@ -83,6 +83,14 @@ class ProjectViewSet(viewsets.ModelViewSet):
 ```
 You may also use ``DRYGlobalPermissions`` and ``DRYObjectPermissions``, which will only check global or object permissions.
 
+If you want to define DRYPermissions for only some method types you can override the get_permissions function on the view like this:
+```python
+def get_permissions(self):
+    if self.request.method == 'GET' or self.request.method == 'PUT':
+        return [DRYPermissions(),]
+    return []
+```
+
 ### Define permission logic on the model
 Permissions for DRY Rest permissions are defined on the model so that they can be accessed both from the view for checking and from the serializer for display purposes with the ``DRYPermissionsField``.
 
@@ -224,6 +232,11 @@ This response object will look like this:
 ``object_only`` - If set to ``True`` then it will only look up object permissions.
 
 This field only returns what is defined on the model. By default it retrieves all default action types that are defined.
+
+A serializer with this field MUST have the request accessible via the serializer's context. By default DRF passes the request to all serializers that is creates. However, if you create serializer yourself you will have to add the request manually like this:
+```python
+serializer = TestSerializer(data=request.data, context={'request': request})
+```
 
 ## Filtering lists by action type
 Many times it is not enough to say that a user does not have permission to view a list of items. Instead you want a user to only be able to view a partial list of items. In this case DRY Rest Permissions built on the filter concept using ``DRYPermissionFiltersBase`` to apply permissions to specific actions.
