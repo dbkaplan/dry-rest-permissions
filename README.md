@@ -54,6 +54,7 @@ DRY Rest Permissions allows you to define both global and object level permissio
 Global permissions are always checked first and define the ability of a user to take an action on an entire model. For example you can define whether a user has the ability to update any projects from the database.
 
 Object permissions are checked if global permissions pass and define whether a user has the ability to perform a specific action on a single object. These are also known as row level permissions.
+Note: list and create actions are the only standard actions that are only global. There is no such object level permission call because they are whole table actions.
 
 ## Read/Write permissions vs. Specific Actions
 DRY Rest Permissions allows you to define permissions for both the standard actions (``list``, ``retrieve``, ``update``, ``destroy`` and ``create``) and custom actions defined using ``@detail_route`` and ``@list_route``.
@@ -233,7 +234,7 @@ This response object will look like this:
 
 This field only returns what is defined on the model. By default it retrieves all default action types that are defined.
 
-A serializer with this field MUST have the request accessible via the serializer's context. By default DRF passes the request to all serializers that is creates. However, if you create serializer yourself you will have to add the request manually like this:
+A serializer with this field MUST have the request accessible via the serializer's context. By default DRF passes the request to all serializers that is creates. However, if you create a serializer yourself you will have to add the request manually like this:
 ```python
 serializer = TestSerializer(data=request.data, context={'request': request})
 ```
