@@ -1,7 +1,7 @@
 # dry-rest-permissions
 
 
-[<img src="https://api.travis-ci.org/Helioscene/dry-rest-permissions.svg?branch=master">](http://travis-ci.org/Helioscene/dry-rest-permissions?branch=master) [<img src="https://img.shields.io/pypi/v/dry-rest-permissions.svg">](https://pypi.python.org/pypi/dry-rest-permissions)
+[<img src="https://api.travis-ci.org/dbkaplan/dry-rest-permissions.svg?branch=master">](http://travis-ci.org/Helioscene/dry-rest-permissions?branch=master) [<img src="https://img.shields.io/pypi/v/dry-rest-permissions.svg">](https://pypi.python.org/pypi/dry-rest-permissions)
 
 ## Overview
 
