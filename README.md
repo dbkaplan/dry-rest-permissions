@@ -29,9 +29,9 @@ DRY Rest Permissions allows developers to easily describe what gives someone per
 
 ## Requirements
 
--  Python (2.7)
+-  Python (2.7, 3.3, 3.4)
 -  Django (1.7, 1.8, 1.9)
--  Django REST Framework (3.0, 3.1)
+-  Django REST Framework (3.0, 3.1, 3.2, 3.3)
 
 ## Installation
 
@@ -136,7 +136,7 @@ class Project(models.Model):
         return True
       
     def has_object_write_permission(self, request):
-        return request.user == self.owner:
+        return request.user == self.owner
 ```
   If we just wanted to grant update permission, but not destroy we could do this:
 ```python
@@ -155,7 +155,7 @@ class Project(models.Model):
         return False
       
     def has_object_update_permission(self, request):
-        return request.user == self.owner:
+        return request.user == self.owner
 ```
 ### Custom action permissions
 If a custom action, ``publish``, were created using ``@detail_route`` then permissions could be defined like so:
@@ -169,7 +169,7 @@ class Project(models.Model):
         return True
       
     def has_object_publish_permission(self, request):
-        return request.user == self.owner:
+        return request.user == self.owner
 ``` 
 ### Helpful decorators
 Three decorators were defined for common permission checks
@@ -193,7 +193,7 @@ class Project(models.Model):
       
     @allow_staff_or_superuser
     def has_object_publish_permission(self, request):
-        return request.user == self.owner:
+        return request.user == self.owner
 ```
 ## Returning Permissions to the Client App
 You often need to know all of the possible permissions that are available to the current user from within your client app so that you can show certain create, edit and destroy options. Sometimes you need to know the permissions on the client app so that you can display messages to them. ``DRYPermissionsField`` allows you to return these permissions in a serializer without having to redefine your permission logic. DRY!
