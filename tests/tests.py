@@ -160,6 +160,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -176,6 +177,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -192,6 +194,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -211,6 +214,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -227,6 +231,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -245,6 +250,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -263,6 +269,7 @@ class DRYRestPermissionsTests(TestCase):
         class TestSerializer(DummySerializer):
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -284,6 +291,7 @@ class DRYRestPermissionsTests(TestCase):
 
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -306,6 +314,7 @@ class DRYRestPermissionsTests(TestCase):
 
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestViewSet(DummyViewSet):
             serializer_class = TestSerializer
@@ -355,6 +364,7 @@ class DRYRestPermissionsTests(TestCase):
 
             class Meta:
                 model = TestModel
+                fields = '__all__'
 
         class TestFilterBackend(DRYPermissionFiltersBase):
             action_routing = True
