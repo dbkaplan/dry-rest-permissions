@@ -11,6 +11,7 @@ from functools import wraps
 from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import fields
+from rest_framework import request
 
 
 class DRYPermissionFiltersBase(filters.BaseFilterBackend):
@@ -269,16 +270,12 @@ class DRYPermissionsField(fields.Field):
 def allow_staff_or_superuser(func):
     """
     This decorator is used to abstract common is_staff and is_superuser functionality
-    out of permission checks. It determines which parameter is the request based on name.
+    out of permission checks.
     """
-    is_object_permission = "has_object" in func.__name__
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
-            request = args[1]
+        request = get_request(args, kwargs)
 
         if request.user.is_staff or request.user.is_superuser:
             return True
@@ -291,16 +288,12 @@ def allow_staff_or_superuser(func):
 def authenticated_users(func):
     """
     This decorator is used to abstract common authentication checking functionality
-    out of permission checks. It determines which parameter is the request based on name.
+    out of permission checks.
     """
-    is_object_permission = "has_object" in func.__name__
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
-            request = args[1]
+        request = get_request(args, kwargs)
 
         if not(request.user and request.user.is_authenticated()):
             return False
@@ -313,16 +306,12 @@ def authenticated_users(func):
 def unauthenticated_users(func):
     """
     This decorator is used to abstract common unauthentication checking functionality
-    out of permission checks. It determines which parameter is the request based on name.
+    out of permission checks.
     """
-    is_object_permission = "has_object" in func.__name__
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
-            request = args[1]
+        request = get_request(args, kwargs)
 
         if request.user and request.user.is_authenticated():
             return False
@@ -330,3 +319,13 @@ def unauthenticated_users(func):
         return func(*args, **kwargs)
 
     return func_wrapper
+
+def get_request(args, kwargs):
+    """
+    Find and return the argument that is an instance of a request object
+    """
+    for arg in args:
+        if isinstance(arg, request.Request):
+            return arg
+
+    return kwargs.get("request", None)
