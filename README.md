@@ -11,7 +11,7 @@ This framework is a perfect fit for apps that have many tables and relationships
 
 ## What does DRY Rest Permissions provide?
 
-1. A framework for defining for defining global and object level permissions per action.
+1. A framework for defining global and object level permissions per action.
   1. Support for broadly defining permissions by grouping actions into safe and unsafe types.
   2. Support for defining only global (table level) permissions or only object (row level) permissions.
   3. Support for custom list and detail actions.
