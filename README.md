@@ -29,8 +29,8 @@ DRY Rest Permissions allows developers to easily describe what gives someone per
 
 ## Requirements
 
--  Python (3.4+)
--  Django (1.11, 2.0)
+-  Python (2.7+)
+-  Django (1.8, 1.10, 2.0)
 -  Django REST Framework (3.5, 3.6, 3.7)
 
 ## Installation
