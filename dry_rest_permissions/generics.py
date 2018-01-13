@@ -6,6 +6,7 @@ for CRUD actions, list actions and custom actions.  It also allows
 permission checks to be returned by the api per object so that
 they can be consumed by a front end application.
 """
+import sys
 from functools import wraps
 
 from rest_framework import filters
@@ -288,6 +289,13 @@ def allow_staff_or_superuser(func):
     return func_wrapper
 
 
+def req_user_authed(request):
+    python_version = sys.version_info[0]
+    if python_version < 3:
+        return request.user.is_authenticated()
+    return request.user.is_authenticated
+
+
 def authenticated_users(func):
     """
     This decorator is used to abstract common authentication checking functionality
@@ -302,7 +310,7 @@ def authenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if not(request.user and request.user.is_authenticated()):
+        if not(request.user and req_user_authed(request)):
             return False
 
         return func(*args, **kwargs)
@@ -324,7 +332,7 @@ def unauthenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if request.user and request.user.is_authenticated():
+        if request.user and req_user_authed(request):
             return False
 
         return func(*args, **kwargs)
