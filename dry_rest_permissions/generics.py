@@ -12,8 +12,6 @@ from rest_framework import filters
 from rest_framework import permissions
 from rest_framework import fields
 
-from django import VERSION as django_version
-
 
 class DRYPermissionFiltersBase(filters.BaseFilterBackend):
     """
@@ -290,12 +288,6 @@ def allow_staff_or_superuser(func):
     return func_wrapper
 
 
-def req_user_authed(request):
-    if django_version < (1, 11):
-        return request.user.is_authenticated()
-    return request.user.is_authenticated
-
-
 def authenticated_users(func):
     """
     This decorator is used to abstract common authentication checking functionality
@@ -310,7 +302,7 @@ def authenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if not(request.user and req_user_authed(request)):
+        if not(request.user and request.user.is_authenticated):
             return False
 
         return func(*args, **kwargs)
@@ -332,7 +324,7 @@ def unauthenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if request.user and req_user_authed(request):
+        if request.user and request.user.is_authenticated:
             return False
 
         return func(*args, **kwargs)
