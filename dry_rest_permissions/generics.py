@@ -302,7 +302,7 @@ def authenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if not(request.user and request.user.is_authenticated()):
+        if not(request.user and request.user.is_authenticated):
             return False
 
         return func(*args, **kwargs)
@@ -324,7 +324,7 @@ def unauthenticated_users(func):
         if is_object_permission:
             request = args[1]
 
-        if request.user and request.user.is_authenticated():
+        if request.user and request.user.is_authenticated:
             return False
 
         return func(*args, **kwargs)
