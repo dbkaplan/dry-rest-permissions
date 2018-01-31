@@ -28,7 +28,7 @@ env:
 #    - TOX_ENV=py36-django1.8-drf3.6
 #    - TOX_ENV=py36-django1.10-drf3.5
 #    - TOX_ENV=py36-django1.10-drf3.6
-    - TOX_ENV=py36-django2.0-drf3.6
+    - TOX_ENV=py36-django2-drf3.6
 
 matrix:
   fast_finish: true
