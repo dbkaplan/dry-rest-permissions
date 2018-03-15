@@ -6,6 +6,7 @@ for CRUD actions, list actions and custom actions.  It also allows
 permission checks to be returned by the api per object so that
 they can be consumed by a front end application.
 """
+import inspect
 from functools import wraps
 
 from rest_framework import filters
@@ -271,14 +272,14 @@ def allow_staff_or_superuser(func):
     This decorator is used to abstract common is_staff and is_superuser functionality
     out of permission checks. It determines which parameter is the request based on name.
     """
-    is_object_permission = "has_object" in func.__name__
+    is_method = inspect.ismethod(func)
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+        if is_method is True:
             request = args[1]
+        else:
+            request = args[0]
 
         if request.user.is_staff or request.user.is_superuser:
             return True
@@ -293,14 +294,14 @@ def authenticated_users(func):
     This decorator is used to abstract common authentication checking functionality
     out of permission checks. It determines which parameter is the request based on name.
     """
-    is_object_permission = "has_object" in func.__name__
+    is_method = inspect.ismethod(func)
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+        if is_method is True:
             request = args[1]
+        else:
+            request = args[0]
 
         if not(request.user and request.user.is_authenticated):
             return False
@@ -315,14 +316,14 @@ def unauthenticated_users(func):
     This decorator is used to abstract common unauthentication checking functionality
     out of permission checks. It determines which parameter is the request based on name.
     """
-    is_object_permission = "has_object" in func.__name__
+    is_method = inspect.ismethod(func)
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+        if is_method is True:
             request = args[1]
+        else:
+            request = args[0]
 
         if request.user and request.user.is_authenticated:
             return False
