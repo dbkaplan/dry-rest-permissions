@@ -275,9 +275,10 @@ def allow_staff_or_superuser(func):
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+
+        if args[0].__class__.__name__ == 'Request':
+            request = args[0]
+        else:
             request = args[1]
 
         if request.user.is_staff or request.user.is_superuser:
@@ -297,9 +298,10 @@ def authenticated_users(func):
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+
+        if args[0].__class__.__name__ == 'Request':
+            request = args[0]
+        else:
             request = args[1]
 
         if not(request.user and request.user.is_authenticated):
@@ -319,9 +321,10 @@ def unauthenticated_users(func):
 
     @wraps(func)
     def func_wrapper(*args, **kwargs):
-        request = args[0]
-        # use second parameter if object permission
-        if is_object_permission:
+
+        if args[0].__class__.__name__ == 'Request':
+            request = args[0]
+        else:
             request = args[1]
 
         if request.user and request.user.is_authenticated:
